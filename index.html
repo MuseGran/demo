@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="description" content="Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation">
+    <meta name="description" content="MuseGran: Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Granularity Conditioning for Long-Form Music Generation</title>
+    <title>MuseGran: Multi-Granularity Conditioning for Long-Form Music Generation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #1a1a2e;
-            --accent: #3b82f6;
-            --accent-hover: #2563eb;
-            --bg: #fdfdfd;
+            --primary: #2c3e50;
+            --accent: #5a7d95;
+            --accent-hover: #476a80;
+            --bg: #ffffff;
             --card-bg: #ffffff;
-            --border: #e5e7eb;
-            --text: #1f2937;
-            --text-light: #6b7280;
-            --section-bg: #f9fafb;
+            --border: #e5e9ec;
+            --text: #2c3e50;
+            --text-light: #6c7a89;
+            --section-bg: #ffffff;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', -apple-system, sans-serif; color: var(--text); background: var(--bg); line-height: 1.7; }
@@ -24,7 +24,7 @@
 
         /* Header */
         header {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #1c2833 0%, #2c3e50 50%, #34495e 100%);
             color: #fff; padding: 56px 0 48px; text-align: center;
         }
         header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 18px; line-height: 1.35; max-width: 880px; margin-left: auto; margin-right: auto; }
@@ -34,11 +34,11 @@
         .links a { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 6px; text-decoration: none; font-size: 0.86rem; font-weight: 500; transition: all 0.2s; }
         .btn-primary { background: var(--accent); color: #fff; }
         .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
-        .btn-outline { border: 1.5px solid rgba(255,255,255,0.35); color: #fff; }
-        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+        .btn-outline { border: 1.5px solid rgba(255,255,255,0.4); color: #fff; }
+        .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.12); }
 
         /* Sections */
-        section { padding: 48px 0; }
+        section { padding: 30px 0; }
         section.alt-bg { background: var(--section-bg); }
         h2 { font-size: 1.4rem; color: var(--primary); margin-bottom: 16px; font-weight: 700; }
         h3 { font-size: 1.1rem; color: var(--primary); margin: 32px 0 12px; font-weight: 600; }
@@ -49,7 +49,7 @@
         .abstract-box {
             background: var(--card-bg); border-left: 4px solid var(--accent);
             padding: 20px 24px; border-radius: 0 8px 8px 0;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.04); font-size: 0.9rem;
+            box-shadow: 0 2px 8px rgba(139,92,246,0.06); font-size: 0.9rem;
         }
 
         /* Figure */
@@ -61,9 +61,9 @@
         .spec-card { border: 1px solid var(--border); border-radius: 6px; background: var(--card-bg); }
         .spec-card-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 7px 12px; background: #f8fafc; cursor: pointer; user-select: none; border-radius: 6px;
+            padding: 7px 12px; background: #f5f7f9; cursor: pointer; user-select: none; border-radius: 6px;
         }
-        .spec-card-header:hover { background: #f1f5f9; }
+        .spec-card-header:hover { background: #eef1f4; }
         .spec-card-title { font-size: 0.8rem; font-weight: 600; color: var(--primary); }
         .spec-card-arrow { transition: transform 0.3s ease; font-size: 0.75rem; color: var(--text-light); }
         .spec-card-arrow.rotated { transform: rotate(180deg); }
@@ -71,26 +71,60 @@
             max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease;
             padding: 0 12px; font-size: 0.78rem; line-height: 1.55; color: var(--text-light);
         }
-        .spec-card-body.is-active { max-height: 500px; overflow-y: auto; padding: 10px 12px; }
+        .spec-card-body.is-active { max-height: 2000px; overflow-y: auto; padding: 10px 12px; }
         .seg-item { padding: 3px 0; border-bottom: 1px dashed #e5e7eb; }
         .seg-item:last-child { border-bottom: none; }
         .seg-label { display: inline-block; font-weight: 600; color: var(--accent); min-width: 56px; }
         .seg-dyn {
-            display: inline-block; background: #fef3c7; padding: 0 5px; border-radius: 3px;
-            font-size: 0.7rem; font-weight: 600; color: #92400e; margin-left: 3px;
+            display: inline-block; background: #eef2f5; padding: 0 5px; border-radius: 3px;
+            font-size: 0.7rem; font-weight: 600; color: #34495e; margin-left: 3px;
         }
 
         /* Demo table */
         .demo-table-wrap { overflow-x: auto; margin: 16px 0; }
-        .demo-table { width: 100%; border-collapse: collapse; }
-        .demo-table th, .demo-table td { padding: 12px 10px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle; }
-        .demo-table th { background: #f0f4f8; font-weight: 600; font-size: 0.84rem; color: var(--primary); }
-        .demo-table td.prompt-cell { text-align: left; font-size: 0.83rem; color: var(--text); min-width: 180px; max-width: 240px; }
-        .demo-table td.spec-cell { text-align: left; min-width: 250px; max-width: 320px; }
-        .demo-table audio { width: 180px; height: 32px; }
+        .demo-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        .demo-table col.col-prompt { width: 22%; }
+        .demo-table col.col-baseline { width: 18%; }
+        .demo-table col.col-ours { width: 24%; }
+        .demo-table th, .demo-table td { padding: 12px 10px; text-align: center; border-bottom: 1px solid var(--border); vertical-align: middle; overflow: hidden; }
+        .demo-table th { background: #e8ecf0; font-weight: 600; font-size: 0.84rem; color: var(--primary); }
+        .demo-table td.prompt-cell { text-align: left; font-size: 0.83rem; color: var(--text); overflow: visible; }
+        .demo-table td.spec-cell { text-align: left; }
+        .demo-table audio { width: 100%; height: 36px; }
+        .demo-table.mrope-table audio { width: 70%; }
+        .demo-table tbody tr:nth-child(odd) { background: #f9fafb; }
+        .demo-table tbody tr:nth-child(even) { background: #ffffff; }
         .demo-table tr:last-child td { border-bottom: none; }
-        .demo-table .col-ours { background: #fffbeb; }
-        .demo-table th.col-ours { background: #fef3c7; color: #92400e; font-weight: 700; }
+        .demo-table th.col-ours { font-weight: 700; }
+
+        /* Comparison cards */
+        .comp-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+            padding: 18px 20px; margin-bottom: 16px;
+        }
+        .comp-card .comp-prompt {
+            font-size: 0.9rem; color: var(--text); margin-bottom: 14px; line-height: 1.5;
+            border-left: 3px solid var(--accent); padding-left: 12px;
+        }
+        .comp-card .comp-models {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px;
+        }
+        .comp-card .comp-model {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .comp-card .comp-model-label {
+            font-size: 0.76rem; font-weight: 600; color: var(--text-light);
+            min-width: 130px; white-space: nowrap;
+        }
+        .comp-card .comp-model-label.is-ours {
+            color: var(--accent); font-weight: 700;
+        }
+        .comp-card .comp-model audio {
+            flex: 1; height: 36px;
+        }
+        @media (max-width: 768px) {
+            .comp-card .comp-models { grid-template-columns: 1fr; }
+        }
 
         /* Grid 2-col for A/B demos */
         .ab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 16px 0; }
@@ -102,42 +136,156 @@
         .ab-item p { font-size: 0.82rem; color: var(--text-light); margin-bottom: 8px; }
         .ab-item audio { width: 100%; }
 
+        /* Waveform visualization */
+        .waveform-container {
+            margin-top: 10px; border-radius: 6px; overflow: hidden;
+            background: #f8fafc; border: 1px solid var(--border);
+            position: relative;
+        }
+        .waveform-label {
+            font-size: 0.72rem; color: var(--text-light); padding: 4px 8px;
+            background: #f5f7f9; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .waveform-label .seg-markers { display: flex; gap: 4px; flex-wrap: wrap; }
+        .waveform-label .seg-marker {
+            display: inline-block; background: #eef2f5; padding: 1px 5px;
+            border-radius: 3px; font-size: 0.65rem; color: #34495e;
+        }
+
         /* StructPlanner showcase */
         .planner-card {
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px;
             padding: 20px 24px; margin: 20px 0;
             box-shadow: 0 1px 6px rgba(0,0,0,0.04);
         }
-        .planner-card .user-prompt {
-            font-size: 0.95rem; font-weight: 500; color: var(--primary);
-            padding: 10px 14px; background: #eff6ff; border-radius: 6px; margin-bottom: 14px;
+        .planner-card .user-prompt, .user-prompt {
+            font-size: 0.85rem; font-weight: 500; color: var(--text);
+            padding: 12px 16px; background: #f5f7f9; border-radius: 6px; margin-bottom: 14px;
         }
-        .planner-card .user-prompt::before { content: "User: "; font-weight: 700; color: var(--accent); }
+        .planner-card .user-prompt::before { content: "User: "; font-weight: 700; color: var(--primary); }
+        .user-prompt::before {
+            content: "User Input";
+            display: block; font-size: 0.82rem; font-weight: 700; color: #5a6c7d;
+            margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid #e8ecf0;
+        }
+        .planner-card[data-seg-player] {
+        }
+        .seg-prompt::before { content: "Prompt: "; font-weight: 700; color: var(--accent); }
+        .seg-prompt {
+            font-size: 0.92rem; font-weight: 400; color: var(--text);
+            padding: 0; background: none; border-radius: 0; margin-bottom: 10px;
+        }
+        .seg-prompt span { color: var(--text); }
+
+        /* Segment player visualization */
+        .seg-player-viz {
+            position: relative; border-radius: 0 0 6px 6px; overflow: hidden;
+            background: #f8f9fa; border: 1px solid var(--border); border-top: none; cursor: crosshair;
+            max-width: 100%;
+        }
+        .seg-player-viz img.viz-waveform { width: 100%; height: 80px; object-fit: fill; display: block; }
+        .seg-player-viz img.viz-melspec { width: 100%; height: 120px; object-fit: fill; display: block; }
+        .spec-playhead-wrap {
+            position: relative; cursor: crosshair;
+        }
+        .spec-playhead-wrap .playhead {
+            position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+            background: #e53e3e; pointer-events: none; z-index: 10;
+            box-shadow: 0 0 4px rgba(229,62,62,0.5);
+            transition: left 0.05s linear;
+        }
+        .seg-player-viz .playhead {
+            position: absolute; top: 0; left: 0; width: 2px; height: 100%;
+            background: #e53e3e; pointer-events: none; z-index: 10;
+            box-shadow: 0 0 4px rgba(229,62,62,0.5);
+            transition: left 0.05s linear;
+        }
+        .seg-indicator {
+            padding: 6px 10px; font-size: 0.72rem; line-height: 1.5;
+            color: var(--text); background: #f0f2f5; border-radius: 6px 6px 0 0;
+            height: calc(1.5em * 5 + 12px); overflow: hidden;
+            border: 1px solid var(--border); border-bottom: none;
+        }
+        .seg-indicator .seg-head {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 2px;
+        }
+        .seg-indicator .seg-now-label {
+            color: var(--primary); font-weight: 700; white-space: nowrap;
+        }
+        .seg-indicator .seg-now-time {
+            color: var(--text-light); font-size: 0.68rem; font-weight: 400; white-space: nowrap;
+        }
+        .seg-indicator .seg-now-dyn {
+            color: #b45309; font-weight: 700; background: rgba(251,191,36,0.15);
+            padding: 1px 6px; border-radius: 3px; white-space: nowrap;
+        }
+        .seg-indicator .seg-fields {
+            display: grid; grid-template-columns: auto 1fr; gap: 1px 8px; font-size: 0.68rem;
+            padding-left: 40px;
+        }
+        .seg-indicator .seg-fields .fk {
+            color: var(--primary); font-weight: 600; white-space: nowrap;
+        }
+        .seg-indicator .seg-fields .fv {
+            color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
         .planner-output {
-            background: #0f172a; color: #e2e8f0; border-radius: 6px; padding: 14px 16px;
-            font-family: 'Fira Code', monospace; font-size: 0.76rem; line-height: 1.5;
-            overflow-x: auto; margin-bottom: 14px;
+            background: #f8fafb; color: var(--text); border-radius: 6px; padding: 14px 16px;
+            font-size: 0.82rem; line-height: 1.6; margin-bottom: 14px;
+            border: 1px solid #e8ecf0; position: relative;
         }
-        .planner-output .k { color: #93c5fd; }
-        .planner-output .v { color: #86efac; }
-        .planner-output .n { color: #fca5a5; }
+        .planner-output::before {
+            content: "StructPlanner Output";
+            display: block; font-size: 0.82rem; font-weight: 700; color: #5a6c7d;
+            margin-bottom: 10px;
+            padding-bottom: 8px; border-bottom: 1px solid #e8ecf0;
+        }
+        .planner-output .po-prompt {
+            font-size: 0.85rem; color: var(--text); margin-bottom: 10px; line-height: 1.5;
+        }
+        .planner-output .po-prompt::before { content: "Prompt: "; font-weight: 600; color: #5a6c7d; }
+        .planner-output .po-conds {
+            display: flex; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 12px;
+            font-size: 0.78rem; color: var(--text-light);
+        }
+        .planner-output .po-conds .po-tag {
+            background: #eef2f5; padding: 2px 8px; border-radius: 4px;
+            font-weight: 500; color: #34495e;
+        }
+        .planner-output .po-segs { margin: 0; padding: 0; list-style: none; }
+        .planner-output .po-segs li {
+            display: flex; align-items: baseline; gap: 8px;
+            padding: 4px 0; border-bottom: 1px dashed #e5e7eb; font-size: 0.78rem;
+        }
+        .planner-output .po-segs li:last-child { border-bottom: none; }
+        .planner-output .po-seg-label {
+            font-weight: 600; color: #5a6c7d; min-width: 40px; flex-shrink: 0;
+        }
+        .planner-output .po-seg-bars {
+            font-weight: 500; color: var(--text); min-width: 52px; flex-shrink: 0;
+        }
+        .planner-output .po-seg-dyn {
+            background: #eef2f5; padding: 0 5px; border-radius: 3px;
+            font-size: 0.7rem; font-weight: 600; color: #34495e; min-width: 22px; text-align: center;
+        }
+        .planner-output .po-seg-desc { color: var(--text-light); }
         .planner-audio { display: flex; align-items: center; gap: 12px; }
-        .planner-audio span { font-size: 0.84rem; font-weight: 500; color: var(--text-light); }
         .planner-audio audio { flex: 1; height: 34px; }
 
         /* Citation */
         .cite-box {
-            background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 18px;
+            background: #1c2833; color: #e8ecf0; border-radius: 8px; padding: 18px;
             font-family: 'Fira Code', monospace; font-size: 0.78rem; overflow-x: auto; line-height: 1.5;
         }
 
-        footer { background: var(--primary); color: #94a3b8; text-align: center; padding: 24px 0; font-size: 0.8rem; }
+        footer { background: #2c3e50; color: #a0aab4; text-align: center; padding: 24px 0; font-size: 0.8rem; }
         .notation { font-size: 0.78rem; color: var(--text-light); font-style: italic; }
 
         @media (max-width: 768px) {
             header h1 { font-size: 1.3rem; }
             .ab-grid { grid-template-columns: 1fr; }
-            .demo-table audio { width: 140px; }
+            .demo-table audio { width: 160px; }
         }
     </style>
 </head>
@@ -145,13 +293,13 @@
 
 <header>
     <div class="container">
-        <h1>Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation</h1>
+        <h1>MuseGran: Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation</h1>
         <p class="authors">Anonymous Authors</p>
         <p class="affiliation">Under Review</p>
         <div class="links">
             <a href="#" class="btn-primary">Paper (coming soon)</a>
             <a href="#" class="btn-outline">Code (coming soon)</a>
-            <a href="#demos" class="btn-outline">Audio Demos</a>
+            <a href="#demos" class="btn-outline">Music Demos</a>
         </div>
     </div>
 </header>
@@ -161,10 +309,10 @@
     <div class="container">
         <h2>Abstract</h2>
         <div class="abstract-box">
-            <p>We present a DiT-based latent diffusion system (up to ~180s, 44.1kHz stereo) with <strong>multi-granularity control</strong> spanning global, segment, and frame scales. Three components: (1) a multi-granularity conditioning system; (2) <strong>MusicRoPE</strong>, a hierarchical rotary position embedding; (3) <strong>SegAlign</strong>, segment-level representation supervision. The framework improves coherence by 11.9% and Beat F1 (0.28&rarr;0.77) over the text-only baseline, while enabling segment-level controllability (RMS &rho;=0.705).</p>
+            <p><strong>MuseGran</strong> is a DiT-based latent diffusion system for long-form music generation (up to ~180s, 44.1kHz stereo) with <strong>multi-granularity conditioning</strong> at global, segment, and frame scales. Key components include: (1) granularity-matched conditioning pathways for text, key, BPM, beat, and per-segment structure; (2) <strong>MusicRoPE</strong>, a hierarchical position encoding aware of bar/beat structure; and (3) <strong>SegAlign</strong>, a segment-level representation alignment strategy. A fine-tuned LLM (<strong>StructPlanner</strong>) converts free-form user prompts into structured generation specifications.</p>
         </div>
         <figure class="figure" style="margin-top:24px;">
-            <img src="figures/framework.png" alt="Framework" style="max-width:880px;">
+            <img src="figures/framework.png" alt="MuseGran Framework Overview" style="max-width:880px;">
         </figure>
     </div>
 </section>
@@ -172,354 +320,410 @@
 <!-- ====== DEMOS ====== -->
 <section class="alt-bg" id="demos">
     <div class="container">
-        <h2>Audio Demos</h2>
+        <h2>Music Demos</h2>
 
-        <!-- ===== 1. MusicRoPE ===== -->
-        <h3>1. MusicRoPE Effect</h3>
-        <p>Same generation conditions (prompt + beat + key), comparing standard RoPE vs. MusicRoPE. MusicRoPE improves structural coherence, phrasing regularity, and bar-level organization.</p>
+        <!-- ===== 1. Overall Comparison ===== -->
+        <h3>1. Overall Comparison</h3>
+
+        <div class="demo-table-wrap">
+        <table class="demo-table">
+            <colgroup>
+                <col class="col-prompt">
+                <col class="col-baseline">
+                <col class="col-baseline">
+                <col class="col-baseline">
+                <col class="col-ours">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th style="text-align:left">Prompt</th>
+                    <th>MusicGen-Large-3.3B<br><span style="font-weight:400;font-size:0.72rem;color:var(--text-light)">~47s</span></th>
+                    <th>MuseControlLite (melody)<br><span style="font-weight:400;font-size:0.72rem;color:var(--text-light)">~47s</span></th>
+                    <th>Stable Audio Open (fine-tuned on our data)<br><span style="font-weight:400;font-size:0.72rem;color:var(--text-light)">~47s</span></th>
+                    <th class="col-ours">MuseGran (Ours)<br><span style="font-weight:400;font-size:0.72rem;color:var(--accent)">~120s</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="prompt-cell">Pop solo piano instrumental song. Simple harmony and emotional theme. Makes you feel nostalgic and wanting a cup of warm tea sitting on the couch</td>
+                    <td><audio controls preload="none"><source src="audio/comp_10_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_10_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_10_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_10_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">A rather slow piano track creating a quiet and relaxed ambiance</td>
+                    <td><audio controls preload="none"><source src="audio/comp_5_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_5_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_5_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_5_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">Country-pop relaxing song with happy mood and acoustic guitar, ideal for young girls going out shopping or dreaming about their love</td>
+                    <td><audio controls preload="none"><source src="audio/comp_2_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_2_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_2_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_2_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">An electronic music track which has an upbeat melody, gets increasingly complex and evokes a sense of positive excitement</td>
+                    <td><audio controls preload="none"><source src="audio/comp_3_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_3_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_3_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_3_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">Smooth chill electronic music featuring calming flute and techno beats</td>
+                    <td><audio controls preload="none"><source src="audio/comp_4_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_4_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_4_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_4_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">Bluesy guitar with a slow repetitive rhythm in a smoky room in latin america</td>
+                    <td><audio controls preload="none"><source src="audio/comp_1_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_1_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_1_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_1_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">This is a slow but deliberate jazz song, featuring two guitars (one acoustic, one bass), with a bass drum being used in points to keep timing</td>
+                    <td><audio controls preload="none"><source src="audio/comp_7_musicgen.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_7_musectrllite.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_7_sao.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/comp_7_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <!-- ===== 2. MusicRoPE ===== -->
+        <h3>2. MusicRoPE Effect</h3>
+        <p>Same prompt, key, and beat conditioning.</p>
+
+        <div class="demo-table-wrap">
+        <table class="demo-table mrope-table">
+            <colgroup>
+                <col style="width:30%">
+                <col style="width:35%">
+                <col style="width:35%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th style="text-align:left">Prompt</th>
+                    <th>Standard RoPE</th>
+                    <th class="col-ours">MusicRoPE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="prompt-cell">Neoclassical piano solo in a room, no accompaniment, dynamic night time love ballad</td>
+                    <td><audio controls preload="none"><source src="audio/mrope_1_baseline.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/mrope_1_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">An instrumental song that evokes some kind of a rush to go and declare your love.</td>
+                    <td><audio controls preload="none"><source src="audio/mrope_2_baseline.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/mrope_2_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+                <tr>
+                    <td class="prompt-cell">Alternative pop rock that is appealing to the 2010s audience.</td>
+                    <td><audio controls preload="none"><source src="audio/mrope_5_baseline.mp3" type="audio/mpeg"></audio></td>
+                    <td><audio controls preload="none"><source src="audio/mrope_5_ours.mp3" type="audio/mpeg"></audio></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+
+        <!-- ===== 3. Multi-Granularity Control ===== -->
+        <h3>3. Multi-Granularity Control</h3>
+        <p>Each conditioning dimension demonstrated independently: tempo, key, duration, and segment-level structure.</p>
+
+        <!-- 3.1 Beat/BPM control -->
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.1 Beat &amp; Tempo Control</h4>
+        <p>Same prompt at different target tempos. Format: <em>input condition</em> &rarr; <em>extracted from generated audio</em>.</p>
 
         <div class="demo-table-wrap">
         <table class="demo-table">
             <thead>
                 <tr>
                     <th style="text-align:left">Prompt</th>
-                    <th>Standard RoPE (Baseline)</th>
-                    <th class="col-ours">+ MusicRoPE</th>
+                    <th>Case 1</th>
+                    <th>Case 2</th>
+                    <th>Case 3</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="prompt-cell">Upbeat pop-rock with electric guitar riffs, steady drums, energetic and bright</td>
-                    <td><audio controls><source src="audio/mrope_1_baseline.mp3" type="audio/mpeg"></audio></td>
-                    <td class="col-ours"><audio controls><source src="audio/mrope_1_ours.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">Peaceful sounding lo-fi, it gives a feeling of security</td>
+                    <td><div class="notation">75 BPM &rarr; 75.0</div><audio controls preload="none"><source src="audio/beat_2_80bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">105 BPM &rarr; 105.3</div><audio controls preload="none"><source src="audio/beat_2_120bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">140 BPM &rarr; 139.5</div><audio controls preload="none"><source src="audio/beat_2_140bpm.mp3" type="audio/mpeg"></audio></td>
                 </tr>
                 <tr>
-                    <td class="prompt-cell">Ambient electronic, slow evolving textures, ethereal pads, dreamy atmosphere</td>
-                    <td><audio controls><source src="audio/mrope_2_baseline.mp3" type="audio/mpeg"></audio></td>
-                    <td class="col-ours"><audio controls><source src="audio/mrope_2_ours.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-                <tr>
-                    <td class="prompt-cell">Classical piano sonata, expressive dynamics, technically demanding passages</td>
-                    <td><audio controls><source src="audio/mrope_3_baseline.mp3" type="audio/mpeg"></audio></td>
-                    <td class="col-ours"><audio controls><source src="audio/mrope_3_ours.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">An upbeat and celebratory folk tune with lively instrumentation and a driving rhythm</td>
+                    <td><div class="notation">75 BPM &rarr; 150.0</div><audio controls preload="none"><source src="audio/beat_1_80bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">105 BPM &rarr; 105.3</div><audio controls preload="none"><source src="audio/beat_1_120bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">140 BPM &rarr; 139.5</div><audio controls preload="none"><source src="audio/beat_1_140bpm.mp3" type="audio/mpeg"></audio></td>
                 </tr>
             </tbody>
         </table>
         </div>
+        <p style="font-size:0.75rem; color:var(--text-light); margin-top:4px;">* BPM extracted via madmom beat tracker. Octave errors (2× or 0.5×) are a known limitation of beat tracking algorithms and do not indicate incorrect tempo generation.</p>
 
-        <!-- ===== 2. Multi-Granularity Control ===== -->
-        <h3>2. Multi-Granularity Control</h3>
-        <p>Demonstrations of each control granularity independently.</p>
 
-        <!-- 2.1 Beat/BPM control -->
-        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">2.1 Beat &amp; Tempo Control</h4>
-        <p>Same prompt generated at different BPMs with beat/downbeat conditioning. The model precisely follows the prescribed rhythmic grid.</p>
+        <!-- 3.2 Key control -->
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.2 Key Control</h4>
+        <p>Same prompt at different target keys. Format: <em>input condition</em> &rarr; <em>extracted from generated audio</em>.</p>
 
         <div class="demo-table-wrap">
         <table class="demo-table">
             <thead>
                 <tr>
                     <th style="text-align:left">Prompt</th>
-                    <th>80 BPM</th>
-                    <th>120 BPM</th>
-                    <th>140 BPM</th>
+                    <th>Case 1</th>
+                    <th>Case 2</th>
+                    <th>Case 3</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="prompt-cell">Funk groove with slap bass, wah guitar, and tight drums</td>
-                    <td><audio controls><source src="audio/beat_1_80bpm.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/beat_1_120bpm.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/beat_1_140bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">Calming instrumental played on bass violin and flute that can be put in the background while doing some work or study</td>
+                    <td><div class="notation">E minor &rarr; E minor</div><audio controls preload="none"><source src="audio/key_1_cmaj.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">G minor &rarr; G minor</div><audio controls preload="none"><source src="audio/key_1_fsmin.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">B minor &rarr; B minor</div><audio controls preload="none"><source src="audio/key_1_ebmaj.mp3" type="audio/mpeg"></audio></td>
                 </tr>
                 <tr>
-                    <td class="prompt-cell">Acoustic fingerstyle guitar, warm and intimate</td>
-                    <td><audio controls><source src="audio/beat_2_80bpm.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/beat_2_120bpm.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/beat_2_140bpm.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">Ambient electronic music with layered synth textures and atmospheric pads</td>
+                    <td><div class="notation">D major &rarr; D major</div><audio controls preload="none"><source src="audio/key_2_cmaj.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">F minor &rarr; F minor</div><audio controls preload="none"><source src="audio/key_2_fsmin.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">F major &rarr; F major</div><audio controls preload="none"><source src="audio/key_2_ebmaj.mp3" type="audio/mpeg"></audio></td>
                 </tr>
             </tbody>
         </table>
         </div>
 
-        <!-- 2.2 Key control -->
-        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">2.2 Key Control</h4>
-        <p>Same prompt and BPM, different musical keys. Key accuracy reaches 99.5%.</p>
+        <!-- 3.3 Duration control -->
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.3 Duration Control (Natural Endings)</h4>
+        <p>Same prompt at different target durations. The model produces natural endings rather than abrupt cuts.</p>
 
         <div class="demo-table-wrap">
         <table class="demo-table">
             <thead>
                 <tr>
                     <th style="text-align:left">Prompt</th>
-                    <th>C major</th>
-                    <th>F# minor</th>
-                    <th>Eb major</th>
+                    <th>Case 1</th>
+                    <th>Case 2</th>
+                    <th>Case 3</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td class="prompt-cell">Gentle piano ballad with strings, melancholic and reflective</td>
-                    <td><audio controls><source src="audio/key_1_cmaj.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/key_1_fsmin.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/key_1_ebmaj.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">A vibrant fusion of traditional Middle Eastern and electronic music</td>
+                    <td><div class="notation">~30s</div><audio controls preload="none"><source src="audio/dur_1_30s.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">~90s</div><audio controls preload="none"><source src="audio/dur_1_90s.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">~180s</div><audio controls preload="none"><source src="audio/dur_1_180s.mp3" type="audio/mpeg"></audio></td>
                 </tr>
                 <tr>
-                    <td class="prompt-cell">Blues guitar with organ, soulful and laid-back</td>
-                    <td><audio controls><source src="audio/key_2_cmaj.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/key_2_fsmin.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/key_2_ebmaj.mp3" type="audio/mpeg"></audio></td>
+                    <td class="prompt-cell">A relaxing jazz song, for focusing, that evokes sentimental feeling</td>
+                    <td><div class="notation">~30s</div><audio controls preload="none"><source src="audio/dur_2_30s.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">~90s</div><audio controls preload="none"><source src="audio/dur_2_90s.mp3" type="audio/mpeg"></audio></td>
+                    <td><div class="notation">~180s</div><audio controls preload="none"><source src="audio/dur_2_180s.mp3" type="audio/mpeg"></audio></td>
                 </tr>
             </tbody>
         </table>
         </div>
 
-        <!-- 2.3 Duration control -->
-        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">2.3 Duration Control (Natural Endings)</h4>
-        <p>Same prompt at different target durations. The model produces natural endings (fade-out or resolution) rather than abrupt cuts.</p>
+        <!-- 3.4 Segment-level structural control -->
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.4 Segment-Level Structural Control</h4>
+        <p>Per-segment dynamics and style descriptions control the musical structure over time.</p>
 
-        <div class="demo-table-wrap">
-        <table class="demo-table">
-            <thead>
-                <tr>
-                    <th style="text-align:left">Prompt</th>
-                    <th>~60s</th>
-                    <th>~120s</th>
-                    <th>~180s</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="prompt-cell">Cinematic orchestral, building from quiet to grand, triumphant</td>
-                    <td><audio controls><source src="audio/dur_1_60s.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/dur_1_120s.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/dur_1_180s.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-                <tr>
-                    <td class="prompt-cell">Chill electronic with synth pads and soft beats, relaxing</td>
-                    <td><audio controls><source src="audio/dur_2_60s.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/dur_2_120s.mp3" type="audio/mpeg"></audio></td>
-                    <td><audio controls><source src="audio/dur_2_180s.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-            </tbody>
-        </table>
-        </div>
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.4.1 A/B Comparison: With vs. Without Segment Conditioning</h4>
 
-        <!-- 2.4 Segment-level structural control -->
-        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">2.4 Segment-Level Structural Control (RMS + Text)</h4>
-        <p>Per-segment dynamics (RMS energy) and text descriptions jointly control the musical structure. Click to expand segment specifications.</p>
-
-        <figure class="figure">
-            <img src="figures/segment_control_case.png" alt="Segment control visualization" style="max-width:750px;">
-            <figcaption>Left: without segment control, energy is uniform. Right: with segment control, the model tracks prescribed dynamics.</figcaption>
-        </figure>
-
-        <div class="ab-grid">
-            <div class="ab-item">
-                <h4>Without Segment Control</h4>
-                <p>Same prompt, no per-segment specification. Energy uniform throughout.</p>
-                <audio controls><source src="audio/seg_noseg.mp3" type="audio/mpeg"></audio>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:16px;">
+            <div class="seg-prompt">A jazzy piano is playing in the foreground. A bass is doing chromatic and moving lines behind.<br><span style="font-size:0.82rem; font-weight:400; color:var(--text-light);">C major &middot; 172 BPM &middot; 120s</span></div>
+            <p style="margin:0 0 12px; font-size:0.76rem; color:var(--text-light); cursor:pointer;" onclick="this.nextElementSibling.classList.toggle('is-active'); this.querySelector('span').textContent = this.nextElementSibling.classList.contains('is-active') ? '▾' : '▸'"><span>▸</span> Segment Conditions &middot; 5 seg</p>
+            <div class="spec-card-body" style="margin:-4px 0 12px; padding-left:12px; border-left:2px solid var(--border);">
+                    <div class="seg-item"><span class="seg-label">Seg 1</span> 0.0–26.3s <span class="seg-dyn">pp</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Smooth jazz instrumental featuring piano as the lead instrument.<br><b>Rhythm:</b> Steady 4/4 time signature with a moderate tempo around 85 BPM.<br><b>Instruments:</b> piano.<br><b>Mood:</b> relaxed, slightly melancholic.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 2</span> 26.3–41.8s <span class="seg-dyn">p</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Jazz instrumental piece featuring piano in C major.<br><b>Rhythm:</b> Steady 4/4 time signature with a moderate tempo around 85 BPM.<br><b>Instruments:</b> piano.<br><b>Mood:</b> calm, slightly melancholic.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 3</span> 41.8–60.0s <span class="seg-dyn">mf</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Instrumental jazz piece featuring piano in C major.<br><b>Rhythm:</b> Steady 4/4 time signature with moderate tempo around 167 BPM.<br><b>Instruments:</b> piano.<br><b>Mood:</b> calm, slightly melancholic.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 4</span> 60.0–83.1s <span class="seg-dyn">p</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Smooth jazz instrumental featuring piano as lead.<br><b>Rhythm:</b> Steady 4/4 time signature with moderate tempo around 176 BPM.<br><b>Instruments:</b> piano.<br><b>Mood:</b> calm, slightly melancholic.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 5</span> 83.1–120.0s <span class="seg-dyn">mf</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Jazz instrumental piece featuring piano as lead instrument.<br><b>Rhythm:</b> Steady 4/4 time signature with moderate tempo around 167 BPM.<br><b>Instruments:</b> piano.<br><b>Mood:</b> relaxed, engaging.</div></div>
             </div>
-            <div class="ab-item">
-                <h4>With Segment Control (RMS + Text)</h4>
-                <p>Per-segment dynamics and style descriptions. Faithfully tracks pp&rarr;mf&rarr;f transitions.</p>
-                <audio controls><source src="audio/seg_withseg.mp3" type="audio/mpeg"></audio>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div style="text-align:center;" data-spec-player>
+                    <p style="margin-bottom:8px;"><span style="display:inline-block; background:#e9ecef; color:#495057; font-weight:600; font-size:0.78rem; padding:3px 10px; border-radius:12px;">Without Segment Control</span></p>
+                    <audio id="audio-noseg-1" controls preload="none" style="width:100%;"><source src="audio/seg_noseg.mp3" type="audio/mpeg"></audio>
+                    <div class="spec-playhead-wrap"><img src="figures/spectrograms/seg_noseg_spec.png" alt="Spectrogram without segment control" style="width:100%; height:100px; object-fit:fill; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
+                </div>
+                <div style="text-align:center;" data-spec-player>
+                    <p style="margin-bottom:8px;"><span style="display:inline-block; background:#dbeafe; color:#1d4ed8; font-weight:600; font-size:0.78rem; padding:3px 10px; border-radius:12px;">With Segment Control</span></p>
+                    <audio id="audio-withseg-1" controls preload="none" style="width:100%;"><source src="audio/seg_withseg.mp3" type="audio/mpeg"></audio>
+                    <div class="spec-playhead-wrap"><img src="figures/spectrograms/seg_withseg_spec.png" alt="Spectrogram with segment control" style="width:100%; height:100px; object-fit:fill; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
+                </div>
             </div>
         </div>
 
-        <p style="margin-top:16px;">More examples with full segment specifications:</p>
-
-        <div class="demo-table-wrap">
-        <table class="demo-table">
-            <thead>
-                <tr>
-                    <th style="text-align:left">Prompt</th>
-                    <th style="text-align:left">Segment Specification</th>
-                    <th class="col-ours">Generated</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="prompt-cell">Emotional piano and strings, cinematic, building intensity</td>
-                    <td class="spec-cell">
-                        <div class="spec-card">
-                            <div class="spec-card-header">
-                                <span class="spec-card-title">4 segments &middot; D minor &middot; 76 BPM</span>
-                                <span class="spec-card-arrow">&#9660;</span>
-                            </div>
-                            <div class="spec-card-body">
-                                <div class="seg-item"><span class="seg-label">Intro</span> 8 bars <span class="seg-dyn">pp</span> &mdash; Sparse piano, single notes, melancholic</div>
-                                <div class="seg-item"><span class="seg-label">Verse</span> 8 bars <span class="seg-dyn">mp</span> &mdash; Piano with gentle strings entering</div>
-                                <div class="seg-item"><span class="seg-label">Chorus</span> 8 bars <span class="seg-dyn">f</span> &mdash; Full strings, emotional climax, sweeping melody</div>
-                                <div class="seg-item"><span class="seg-label">Outro</span> 8 bars <span class="seg-dyn">pp</span> &mdash; Fading piano, soft resolution</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="col-ours"><audio controls><source src="audio/seg_demo1.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-                <tr>
-                    <td class="prompt-cell">Electronic dance, high energy with breakdowns and drops</td>
-                    <td class="spec-cell">
-                        <div class="spec-card">
-                            <div class="spec-card-header">
-                                <span class="spec-card-title">5 segments &middot; A minor &middot; 128 BPM</span>
-                                <span class="spec-card-arrow">&#9660;</span>
-                            </div>
-                            <div class="spec-card-body">
-                                <div class="seg-item"><span class="seg-label">Intro</span> 8 bars <span class="seg-dyn">mp</span> &mdash; Filtered synths, atmospheric buildup</div>
-                                <div class="seg-item"><span class="seg-label">Build</span> 8 bars <span class="seg-dyn">mf</span> &mdash; Rising energy, snare rolls, tension</div>
-                                <div class="seg-item"><span class="seg-label">Drop</span> 8 bars <span class="seg-dyn">ff</span> &mdash; Full bass, heavy kick, intense synth leads</div>
-                                <div class="seg-item"><span class="seg-label">Break</span> 4 bars <span class="seg-dyn">p</span> &mdash; Stripped back, ambient textures</div>
-                                <div class="seg-item"><span class="seg-label">Drop 2</span> 8 bars <span class="seg-dyn">ff</span> &mdash; Second drop, added variation</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="col-ours"><audio controls><source src="audio/seg_demo2.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-                <tr>
-                    <td class="prompt-cell">Jazz trio, walking bass, Rhodes piano, relaxed and smooth</td>
-                    <td class="spec-cell">
-                        <div class="spec-card">
-                            <div class="spec-card-header">
-                                <span class="spec-card-title">4 segments &middot; Bb major &middot; 108 BPM</span>
-                                <span class="spec-card-arrow">&#9660;</span>
-                            </div>
-                            <div class="spec-card-body">
-                                <div class="seg-item"><span class="seg-label">Head</span> 8 bars <span class="seg-dyn">mf</span> &mdash; Main theme, Rhodes melody with walking bass</div>
-                                <div class="seg-item"><span class="seg-label">Solo</span> 12 bars <span class="seg-dyn">mf</span> &mdash; Piano improvisation, responsive drums</div>
-                                <div class="seg-item"><span class="seg-label">Head Out</span> 8 bars <span class="seg-dyn">mf</span> &mdash; Return to theme</div>
-                                <div class="seg-item"><span class="seg-label">Outro</span> 4 bars <span class="seg-dyn">p</span> &mdash; Gentle tag ending, bass resolution</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="col-ours"><audio controls><source src="audio/seg_demo3.mp3" type="audio/mpeg"></audio></td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:16px;">
+            <div class="seg-prompt">90s hip hop with a moody synth which gives a very ominous but danceable vibe to it.<br><span style="font-size:0.82rem; font-weight:400; color:var(--text-light);">D major &middot; 90 BPM &middot; 120s</span></div>
+            <p style="margin:0 0 12px; font-size:0.76rem; color:var(--text-light); cursor:pointer;" onclick="this.nextElementSibling.classList.toggle('is-active'); this.querySelector('span').textContent = this.nextElementSibling.classList.contains('is-active') ? '▾' : '▸'"><span>▸</span> Segment Conditions (right) &middot; 5 seg</p>
+            <div class="spec-card-body" style="margin:-4px 0 12px; padding-left:12px; border-left:2px solid var(--border);">
+                    <div class="seg-item"><span class="seg-label">Seg 1</span> 0.0–17.5s <span class="seg-dyn">pp</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Ambient electronic instrumental piece.<br><b>Rhythm:</b> No discernible rhythmic pattern.<br><b>Instruments:</b> synthesizer, bass guitar.<br><b>Mood:</b> calm, sustained tone.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 2</span> 17.5–60.0s <span class="seg-dyn">p</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Electronic downtempo blending beats with subtle hip-hop influences.<br><b>Rhythm:</b> Steady 4/4 beat around 90 BPM, relaxed yet engaging groove.<br><b>Instruments:</b> synthesizers, drum machine, bassline.<br><b>Mood:</b> calmness, introspection.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 3</span> 60.0–80.3s <span class="seg-dyn">mf</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Chillout instrumental blending ambient electronic textures with downtempo beats.<br><b>Rhythm:</b> Steady 4/4 beat around 90 BPM.<br><b>Instruments:</b> synth pads, soft drums, subtle bassline.<br><b>Mood:</b> calmness, smooth textures.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 4</span> 80.3–117.8s <span class="seg-dyn">mf</span><div style="padding-left:56px; font-size:0.78rem; line-height:1.6;"><b>Style:</b> Electronic instrumental blending ambient elements with chillout vibes.<br><b>Rhythm:</b> Steady 4/4 beat typical of electronic dance music.<br><b>Instruments:</b> synthesizers, drum machine beats.<br><b>Mood:</b> energy and excitement, driving tempo.</div></div>
+                    <div class="seg-item"><span class="seg-label">Seg 5</span> 117.8–120.0s <span class="seg-dyn">pp</span></div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+                <div style="text-align:center;" data-spec-player>
+                    <p style="margin-bottom:8px;"><span style="display:inline-block; background:#e9ecef; color:#495057; font-weight:600; font-size:0.78rem; padding:3px 10px; border-radius:12px;">Without Segment Control</span></p>
+                    <audio id="audio-noseg-2" controls preload="none" style="width:100%;"><source src="audio/seg_noseg_2.mp3" type="audio/mpeg"></audio>
+                    <div class="spec-playhead-wrap"><img src="figures/spectrograms/seg_noseg_2_spec.png" alt="Spectrogram without segment control" style="width:100%; height:100px; object-fit:fill; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
+                </div>
+                <div style="text-align:center;" data-spec-player>
+                    <p style="margin-bottom:8px;"><span style="display:inline-block; background:#dbeafe; color:#1d4ed8; font-weight:600; font-size:0.78rem; padding:3px 10px; border-radius:12px;">With Segment Control</span></p>
+                    <audio id="audio-withseg-2" controls preload="none" style="width:100%;"><source src="audio/seg_withseg_2.mp3" type="audio/mpeg"></audio>
+                    <div class="spec-playhead-wrap"><img src="figures/spectrograms/seg_withseg_2_spec.png" alt="Spectrogram with segment control" style="width:100%; height:100px; object-fit:fill; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
+                </div>
+            </div>
         </div>
 
-        <!-- ===== 3. StructPlanner ===== -->
-        <h3>3. StructPlanner: Prompt &rarr; Structure &rarr; Music</h3>
-        <p>StructPlanner (fine-tuned Qwen3-14B) converts free-form user prompts into structured specifications, which are then consumed by the generation system. Below are end-to-end examples showing the full pipeline.</p>
+        <h4 style="font-size:0.98rem; margin:24px 0 10px; color:var(--primary); font-weight:600;">3.4.2 Interactive Segment Visualization</h4>
+        <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:16px;">Play the audio to see real-time segment tracking with spectrogram overlay. Click on the spectrogram to seek. Segment info updates in real-time during playback.</p>
+
+        <!-- Seg Demo 1: Classical crossover, piano+strings+woodwinds -->
+        <div class="planner-card" data-seg-player data-segments='[{"start":0,"end":13.0,"label":"Intro","dyn":"mf","style":"Serene and elegant classical composition with a romantic flair.","rhythm":"Moderate and steady, creating a flowing and graceful rhythm.","emotions":"Calm, nostalgia, and gentle melancholy.","instruments":"piano, strings, flute"},{"start":13.0,"end":26.2,"label":"Intro","dyn":"p","style":"Slow, expressive classical composition with a romantic or baroque influence.","rhythm":"Steady and unhurried, clear 4/4 time signature, allowing for lyrical phrasing.","emotions":"Melancholy, introspection, and deep emotional resonance.","instruments":"violin, piano"},{"start":26.2,"end":56.0,"label":"Chorus","dyn":"mf","style":"Slow, expressive classical composition with a romantic or cinematic feel.","rhythm":"Adagio (slow), creating a flowing and unhurried pace.","emotions":"Nostalgia, melancholy, and deep reflection.","instruments":"piano, strings, woodwinds"},{"start":56.0,"end":69.5,"label":"Inst","dyn":"pp","style":"Slow, melancholic classical composition with a romantic era influence.","rhythm":"Steady and unhurried, tempo allows for expressive phrasing.","emotions":"Nostalgia, introspection, and gentle sadness.","instruments":"piano, strings"},{"start":69.5,"end":82.2,"label":"Inst","dyn":"pp","style":"Slow, lyrical ballad with a classical influence.","rhythm":"Steady and unhurried, gentle 4/4 time signature.","emotions":"Nostalgia, tranquility, and introspection.","instruments":"piano, strings"},{"start":82.2,"end":107.0,"label":"Chorus","dyn":"mf","style":"Grand, cinematic orchestral composition with a romantic and dramatic flair.","rhythm":"Fluid and expressive, moderate tempo allowing for emotional depth and dynamic shifts.","emotions":"Nostalgia, grandeur, and poignant beauty.","instruments":"strings, piano, woodwinds, brass, percussion"},{"start":107.0,"end":124.3,"label":"Chorus","dyn":"f","style":"Grand, cinematic orchestral composition with a classical influence.","rhythm":"Steady and flowing, moderate tempo evoking movement and progression.","emotions":"Grandeur, nostalgia, and a touch of melancholy.","instruments":"strings, brass, woodwinds, percussion"},{"start":124.3,"end":137.9,"label":"Chorus","dyn":"mf","style":"Classical orchestral composition with a romantic era influence.","rhythm":"Moderate, steady 4/4 time signature, flowing and graceful.","emotions":"Elegance, nostalgia, and serene beauty.","instruments":"strings, woodwinds, brass, percussion"}]'>
+            <div class="seg-prompt">The song is a melancholic and emotionally rich classical composition that blends piano, strings, and woodwinds to evoke nostalgia and introspection.<br><span style="font-size:0.82rem; font-weight:400; color:var(--text-light);">A minor &middot; 109 BPM &middot; 139s</span></div>
+            <div class="planner-audio">
+                <audio controls preload="none" class="spec-trigger"><source src="1.mp3" type="audio/mpeg"></audio>
+            </div>
+            <div class="spec-reveal" style="overflow:hidden; transition:max-height 0.5s ease; margin-top:0;">
+                <div class="seg-indicator"><div class="seg-head"><span class="seg-now-label">--</span><span class="seg-now-time"></span><span class="seg-now-dyn"></span></div><div class="seg-fields"></div></div>
+                <div class="seg-player-viz">
+                    <img class="viz-waveform" src="figures/spectrograms/interactive_1_waveform.png" alt="Waveform">
+                    <img class="viz-melspec" src="figures/spectrograms/interactive_1_melspec.png" alt="Mel Spectrogram">
+                    <div class="playhead"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seg Demo 2: Jazz/Electronic chill, piano+synth -->
+        <div class="planner-card" data-seg-player data-segments='[{"start":0,"end":3.5,"label":"Inst","dyn":"pp","style":"","rhythm":"","emotions":"","instruments":""},{"start":3.5,"end":42.6,"label":"Verse","dyn":"p","style":"A slow‑tempo instrumental piece that blends contemporary classical piano writing with ambient electronic textures.","rhythm":"The track moves at approximately 96.8 BPM in a steady meter, allowing space between notes while maintaining forward momentum.","emotions":"It conveys introspection through gentle dynamics and subtle harmonic shifts, evoking calmness tinged with melancholy.","instruments":"piano, synth pads"},{"start":42.6,"end":60.0,"label":"Verse","dyn":"mf","style":"Instrumental jazz ballad.","rhythm":"Slow, relaxed tempo around 60–70 BPM in common time.","emotions":"Melancholic yet peaceful atmosphere evoking introspection.","instruments":"piano, upright bass, brushed drums"},{"start":60.0,"end":84.0,"label":"Chorus","dyn":"f","style":"Instrumental jazz ballad.","rhythm":"Slow swing feel around 90–95 BPM.","emotions":"Melancholic yet warm atmosphere evoking nostalgia.","instruments":"piano, upright bass, brushed drums"},{"start":84.0,"end":120.0,"label":"Chorus","dyn":"f","style":"Jazz instrumental piece.","rhythm":"A relaxed swing feel typical of classic jazz ensembles.","emotions":"Sophisticated yet laid-back atmosphere, inviting listeners into a smooth, contemplative mood.","instruments":"piano, upright bass, drum kit"}]'>
+            <div class="seg-prompt">Percussion and piano conversation between two octaves, cinematic and introspective<br><span style="font-size:0.82rem; font-weight:400; color:var(--text-light);">F# minor &middot; 98 BPM &middot; 120s</span></div>
+            <div class="planner-audio">
+                <audio controls preload="none" class="spec-trigger"><source src="2.mp3" type="audio/mpeg"></audio>
+            </div>
+            <div class="spec-reveal" style="overflow:hidden; transition:max-height 0.5s ease; margin-top:0;">
+                <div class="seg-indicator"><div class="seg-head"><span class="seg-now-label">--</span><span class="seg-now-time"></span><span class="seg-now-dyn"></span></div><div class="seg-fields"></div></div>
+                <div class="seg-player-viz">
+                    <img class="viz-waveform" src="figures/spectrograms/interactive_2_waveform.png" alt="Waveform">
+                    <img class="viz-melspec" src="figures/spectrograms/interactive_2_melspec.png" alt="Mel Spectrogram">
+                    <div class="playhead"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seg Demo 3: Progressive electronic / house -->
+        <div class="planner-card" data-seg-player data-segments='[{"start":0,"end":1.9,"label":"Inst","dyn":"pp","style":"","rhythm":"","emotions":"","instruments":""},{"start":1.9,"end":33.2,"label":"Verse","dyn":"mf","style":"Electronic dance track in house/dubstep style.","rhythm":"Steady 4/4 beat typical of electronic dance genres like house and dubstep.","emotions":"Energetic yet slightly dark atmosphere through its minor key tonality.","instruments":"synthesizer, bass synthesizer, drum machine"},{"start":33.2,"end":56.9,"label":"Chorus","dyn":"f","style":"Electronic dance track in B minor featuring deep house elements.","rhythm":"Steady 4/4 beat typical of house music.","emotions":"Calm yet engaging atmosphere suitable for dancing.","instruments":"synth bass, synth drums"},{"start":56.9,"end":88.0,"label":"Chorus","dyn":"f","style":"Electronic dance track in B minor.","rhythm":"Steady 4/4 beat typical of electronic dance music.","emotions":"Energy and excitement through its driving tempo and rhythmic patterns.","instruments":"synthesizer, drum machine"},{"start":88.0,"end":118.7,"label":"Verse","dyn":"p","style":"Electronic dance track blending techno elements.","rhythm":"Steady 4/4 beat typical of electronic dance genres like techno and house.","emotions":"Energetic yet slightly melancholic atmosphere through its minor key tonality.","instruments":"synthesizer, drum machine"},{"start":118.7,"end":120.0,"label":"Inst","dyn":"p","style":"","rhythm":"","emotions":"","instruments":""}]'>
+            <div class="seg-prompt">Progressive electronic song with an intro of African percussions<br><span style="font-size:0.82rem; font-weight:400; color:var(--text-light);">E minor &middot; 123 BPM &middot; 120s</span></div>
+            <div class="planner-audio">
+                <audio controls preload="none" class="spec-trigger"><source src="3.mp3" type="audio/mpeg"></audio>
+            </div>
+            <div class="spec-reveal" style="overflow:hidden; transition:max-height 0.5s ease; margin-top:0;">
+                <div class="seg-indicator"><div class="seg-head"><span class="seg-now-label">--</span><span class="seg-now-time"></span><span class="seg-now-dyn"></span></div><div class="seg-fields"></div></div>
+                <div class="seg-player-viz">
+                    <img class="viz-waveform" src="figures/spectrograms/interactive_3_waveform.png" alt="Waveform">
+                    <img class="viz-melspec" src="figures/spectrograms/interactive_3_melspec.png" alt="Mel Spectrogram">
+                    <div class="playhead"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== 4. StructPlanner ===== -->
+        <h3>4. StructPlanner: Prompt &rarr; Structure &rarr; Music</h3>
+        <p>A fine-tuned LLM converts free-form user prompts into full structured specifications, which are then consumed by the generation system. End-to-end examples below.</p>
 
         <!-- Example 1 -->
-        <div class="planner-card">
-            <div class="user-prompt">A dreamy night-time piece, like stargazing alone on a rooftop</div>
-            <div class="spec-card" style="margin-bottom:14px;">
-                <div class="spec-card-header">
-                    <span class="spec-card-title">StructPlanner Output</span>
-                    <span class="spec-card-arrow">&#9660;</span>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:16px;">
+            <div class="user-prompt">Write me a soothing piano piece in 3/4 time</div>
+            <div class="planner-output">
+                <div class="po-prompt">A neoclassical piano piece in 3/4 time, blending gentle classical influence with modern minimalist touches. Serene, elegant, and contemplative.</div>
+                <div class="po-conds">
+                    <span class="po-tag">Bb major</span>
+                    <span class="po-tag">103.4 BPM</span>
+                    <span class="po-tag">3/4</span>
+                    <span class="po-tag">73s</span>
+                    <span class="po-tag">Classical, Neoclassical</span>
                 </div>
-                <div class="spec-card-body">
-                    <div class="planner-output" style="margin:0;">
-<span class="k">key</span>: <span class="v">Bb major</span>  <span class="k">bpm</span>: <span class="n">100</span>  <span class="k">meter</span>: <span class="n">4/4</span>
-<span class="k">genre</span>: <span class="v">Ambient, Cinematic, New Age</span>
-<span class="k">instruments</span>: <span class="v">Piano, Strings, Synth Pad, Harp, Flute</span>
-
-<span class="k">segments</span>:
-  <span class="v">Intro</span>   | <span class="n">8</span> bars | <span class="n">mp</span> | Piano, Synth Pad &mdash; Sparse, floating notes
-  <span class="v">Verse</span>   | <span class="n">9</span> bars | <span class="n">mf</span> | Piano, Strings, Harp &mdash; Gentle melody emerges
-  <span class="v">Chorus</span>  | <span class="n">8</span> bars | <span class="n">mf</span> | Flute, Piano, Strings &mdash; Ethereal, fuller texture
-  <span class="v">Verse 2</span> | <span class="n">8</span> bars | <span class="n">mf</span> | Piano, Strings, Harp &mdash; Variation on theme
-  <span class="v">Outro</span>   | <span class="n">9</span> bars | <span class="n">mp</span> | Piano, Synth Pad &mdash; Fading into silence
-                    </div>
-                </div>
+                <ul class="po-segs">
+                    <li><span class="po-seg-label">Seg 1</span><span class="po-seg-bars">0:00–0:19</span><span class="po-seg-dyn">mp</span><span class="po-seg-desc">Piano &mdash; Gentle, melodic solo with classical influence</span></li>
+                    <li><span class="po-seg-label">Seg 2</span><span class="po-seg-bars">0:19–0:38</span><span class="po-seg-dyn">mf</span><span class="po-seg-desc">Piano &mdash; Modern classical, minimalist touch</span></li>
+                    <li><span class="po-seg-label">Seg 3</span><span class="po-seg-bars">0:38–0:56</span><span class="po-seg-dyn">mf</span><span class="po-seg-desc">Piano &mdash; Serene, elegant, touch of romanticism</span></li>
+                    <li><span class="po-seg-label">Seg 4</span><span class="po-seg-bars">0:56–1:13</span><span class="po-seg-dyn">mp</span><span class="po-seg-desc">Piano &mdash; Slow, contemplative solo, romantic touch</span></li>
+                </ul>
             </div>
             <div class="planner-audio">
-                <span>Generated:</span>
-                <audio controls><source src="audio/planner_1.mp3" type="audio/mpeg"></audio>
+                <audio controls preload="none"><source src="audio/planner_demo1.wav" type="audio/wav"></audio>
             </div>
+            <div class="spec-playhead-wrap" data-spec-player><img src="figures/spectrograms/planner_1_spec.png" alt="Spectrogram" style="width:100%; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
         </div>
 
         <!-- Example 2 -->
-        <div class="planner-card">
-            <div class="user-prompt">来一段热血沸腾的战斗BGM，像boss战一样</div>
-            <div class="spec-card" style="margin-bottom:14px;">
-                <div class="spec-card-header">
-                    <span class="spec-card-title">StructPlanner Output</span>
-                    <span class="spec-card-arrow">&#9660;</span>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:16px;">
+            <div class="user-prompt" lang="zh">来一段中国古风音乐</div>
+            <div class="planner-output">
+                <div class="po-prompt">The song blends lively and serene moments, transitioning between energetic and reflective moods, with a rich tapestry of traditional and classical instruments.</div>
+                <div class="po-conds">
+                    <span class="po-tag">B minor</span>
+                    <span class="po-tag">100 BPM</span>
+                    <span class="po-tag">4/4</span>
+                    <span class="po-tag">98s</span>
+                    <span class="po-tag">Traditional Chinese, Classical Instrumental</span>
                 </div>
-                <div class="spec-card-body">
-                    <div class="planner-output" style="margin:0;">
-<span class="k">key</span>: <span class="v">E minor</span>  <span class="k">bpm</span>: <span class="n">155</span>  <span class="k">meter</span>: <span class="n">4/4</span>
-<span class="k">genre</span>: <span class="v">Orchestral, Epic, Game OST</span>
-<span class="k">instruments</span>: <span class="v">Orchestra, Choir, Electric Guitar, Drums, Synth</span>
-
-<span class="k">segments</span>:
-  <span class="v">Intro</span>    | <span class="n">4</span> bars  | <span class="n">mf</span> | Drums, Strings &mdash; Tension build, war drums
-  <span class="v">Verse</span>    | <span class="n">8</span> bars  | <span class="n">f</span>  | Guitar, Orchestra &mdash; Driving riff, aggressive
-  <span class="v">Chorus</span>   | <span class="n">8</span> bars  | <span class="n">ff</span> | Full orchestra + Choir &mdash; Epic climax, heroic theme
-  <span class="v">Bridge</span>   | <span class="n">4</span> bars  | <span class="n">mp</span> | Strings &mdash; Brief respite, ominous
-  <span class="v">Chorus 2</span> | <span class="n">8</span> bars  | <span class="n">ff</span> | All instruments &mdash; Final assault, maximum intensity
-  <span class="v">Outro</span>    | <span class="n">4</span> bars  | <span class="n">f</span>  | Orchestra &mdash; Victory fanfare, resolution
-                    </div>
-                </div>
+                <ul class="po-segs">
+                    <li><span class="po-seg-label">Seg 1</span><span class="po-seg-bars">0:00–0:19</span><span class="po-seg-dyn">mp</span><span class="po-seg-desc">Guzheng, Pipa, Erhu, Guqin &mdash; Lively and energetic, celebratory</span></li>
+                    <li><span class="po-seg-label">Seg 2</span><span class="po-seg-bars">0:19–0:38</span><span class="po-seg-dyn">p</span><span class="po-seg-desc">Piano, Strings, Woodwinds &mdash; Serene, elegant, calm reflection</span></li>
+                    <li><span class="po-seg-label">Seg 3</span><span class="po-seg-bars">0:38–0:58</span><span class="po-seg-dyn">mp</span><span class="po-seg-desc">Piano, Strings, Harp &mdash; Steady and flowing, gentle melancholy</span></li>
+                    <li><span class="po-seg-label">Seg 4</span><span class="po-seg-bars">0:58–1:17</span><span class="po-seg-dyn">mp</span><span class="po-seg-desc">Violin, Piano, Cello &mdash; Fast-paced, dynamic, grandeur</span></li>
+                    <li><span class="po-seg-label">Seg 5</span><span class="po-seg-bars">1:17–1:38</span><span class="po-seg-dyn">p</span><span class="po-seg-desc">Piano, Strings, Harp, Flute &mdash; Tranquil, nostalgic conclusion</span></li>
+                </ul>
             </div>
             <div class="planner-audio">
-                <span>Generated:</span>
-                <audio controls><source src="audio/planner_2.mp3" type="audio/mpeg"></audio>
+                <audio controls preload="none"><source src="audio/planner_demo2.wav" type="audio/wav"></audio>
             </div>
+            <div class="spec-playhead-wrap" data-spec-player><img src="figures/spectrograms/planner_2_spec.png" alt="Spectrogram" style="width:100%; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
         </div>
 
         <!-- Example 3 -->
-        <div class="planner-card">
-            <div class="user-prompt">Relaxing coffee shop vibes, rainy afternoon, acoustic and warm</div>
-            <div class="spec-card" style="margin-bottom:14px;">
-                <div class="spec-card-header">
-                    <span class="spec-card-title">StructPlanner Output</span>
-                    <span class="spec-card-arrow">&#9660;</span>
+        <div style="border:1px solid var(--border); border-radius:8px; padding:16px 18px; margin-bottom:16px;">
+            <div class="user-prompt" lang="zh">生成一首动感电子舞曲，节奏强烈，适合蹦迪</div>
+            <div class="planner-output">
+                <div class="po-prompt">An energetic and uplifting electronic dance track that blends cinematic elements with a driving rhythm, creating a sense of excitement and euphoria.</div>
+                <div class="po-conds">
+                    <span class="po-tag">C# minor</span>
+                    <span class="po-tag">120 BPM</span>
+                    <span class="po-tag">4/4</span>
+                    <span class="po-tag">143s</span>
+                    <span class="po-tag">Electronic, House, Progressive House</span>
                 </div>
-                <div class="spec-card-body">
-                    <div class="planner-output" style="margin:0;">
-<span class="k">key</span>: <span class="v">G major</span>  <span class="k">bpm</span>: <span class="n">88</span>  <span class="k">meter</span>: <span class="n">4/4</span>
-<span class="k">genre</span>: <span class="v">Lo-fi, Acoustic, Indie Folk</span>
-<span class="k">instruments</span>: <span class="v">Acoustic Guitar, Piano, Upright Bass, Brushed Drums</span>
-
-<span class="k">segments</span>:
-  <span class="v">Intro</span>   | <span class="n">4</span> bars  | <span class="n">p</span>  | Guitar &mdash; Gentle fingerpicking, room ambiance
-  <span class="v">Verse 1</span> | <span class="n">8</span> bars  | <span class="n">mp</span> | Guitar, Piano &mdash; Warm chords, simple melody
-  <span class="v">Chorus</span>  | <span class="n">8</span> bars  | <span class="n">mf</span> | All instruments &mdash; Cozy groove, full texture
-  <span class="v">Verse 2</span> | <span class="n">8</span> bars  | <span class="n">mp</span> | Guitar, Bass &mdash; Variation, humming quality
-  <span class="v">Outro</span>   | <span class="n">8</span> bars  | <span class="n">p</span>  | Guitar, Piano &mdash; Winding down, soft ending
-                    </div>
-                </div>
+                <ul class="po-segs">
+                    <li><span class="po-seg-label">Seg 1</span><span class="po-seg-bars">0:00–0:24</span><span class="po-seg-dyn">p</span><span class="po-seg-desc">Synth, Ambient pads &mdash; Cinematic, atmospheric, mysterious</span></li>
+                    <li><span class="po-seg-label">Seg 2</span><span class="po-seg-bars">0:24–0:40</span><span class="po-seg-dyn">mf</span><span class="po-seg-desc">Synth, Drum machine &mdash; Upbeat, danceable groove</span></li>
+                    <li><span class="po-seg-label">Seg 3</span><span class="po-seg-bars">0:40–0:56</span><span class="po-seg-dyn">mf</span><span class="po-seg-desc">Synth, Bass &mdash; Driving four-on-the-floor, euphoric</span></li>
+                    <li><span class="po-seg-label">Seg 4</span><span class="po-seg-bars">0:56–1:14</span><span class="po-seg-dyn">f</span><span class="po-seg-desc">Full mix &mdash; Fast-paced, maximum energy drop</span></li>
+                    <li><span class="po-seg-label">Seg 5</span><span class="po-seg-bars">1:14–1:28</span><span class="po-seg-dyn">p</span><span class="po-seg-desc">Ambient pads, E-drums &mdash; Downtempo bridge, introspective</span></li>
+                    <li><span class="po-seg-label">Seg 6</span><span class="po-seg-bars">1:28–1:44</span><span class="po-seg-dyn">mf</span><span class="po-seg-desc">Synth, Drum machine &mdash; Energy rebuild</span></li>
+                    <li><span class="po-seg-label">Seg 7</span><span class="po-seg-bars">1:44–2:00</span><span class="po-seg-dyn">f</span><span class="po-seg-desc">Full mix &mdash; Euphoric climax, driving bassline</span></li>
+                    <li><span class="po-seg-label">Seg 8</span><span class="po-seg-bars">2:00–2:22</span><span class="po-seg-dyn">f</span><span class="po-seg-desc">Full mix &mdash; Final push, high-energy resolution</span></li>
+                </ul>
             </div>
             <div class="planner-audio">
-                <span>Generated:</span>
-                <audio controls><source src="audio/planner_3.mp3" type="audio/mpeg"></audio>
+                <audio controls preload="none"><source src="audio/planner_demo3.wav" type="audio/wav"></audio>
             </div>
+            <div class="spec-playhead-wrap" data-spec-player><img src="figures/spectrograms/planner_3_spec.png" alt="Spectrogram" style="width:100%; display:block; border-radius:4px; margin-top:6px;"><div class="playhead"></div></div>
         </div>
 
-        <!-- Example 4 -->
-        <div class="planner-card">
-            <div class="user-prompt">一首适合跑步的电子音乐，节奏感强，从热身到冲刺再到放松</div>
-            <div class="spec-card" style="margin-bottom:14px;">
-                <div class="spec-card-header">
-                    <span class="spec-card-title">StructPlanner Output</span>
-                    <span class="spec-card-arrow">&#9660;</span>
-                </div>
-                <div class="spec-card-body">
-                    <div class="planner-output" style="margin:0;">
-<span class="k">key</span>: <span class="v">A minor</span>  <span class="k">bpm</span>: <span class="n">135</span>  <span class="k">meter</span>: <span class="n">4/4</span>
-<span class="k">genre</span>: <span class="v">EDM, Progressive House, Workout</span>
-<span class="k">instruments</span>: <span class="v">Synth Lead, Bass, Kick, Hi-hats, Pads, Claps</span>
 
-<span class="k">segments</span>:
-  <span class="v">Warm-up</span>  | <span class="n">8</span> bars  | <span class="n">mp</span> | Pads, light beats &mdash; Gradual start, easy rhythm
-  <span class="v">Build</span>    | <span class="n">8</span> bars  | <span class="n">mf</span> | Synth layers, rising energy &mdash; Picking up pace
-  <span class="v">Sprint 1</span> | <span class="n">8</span> bars  | <span class="n">ff</span> | Full drop, driving bass &mdash; Maximum intensity
-  <span class="v">Recovery</span> | <span class="n">4</span> bars  | <span class="n">p</span>  | Ambient pads &mdash; Brief rest
-  <span class="v">Sprint 2</span> | <span class="n">8</span> bars  | <span class="n">ff</span> | Second drop, variation &mdash; Final push
-  <span class="v">Cool-down</span>| <span class="n">8</span> bars  | <span class="n">mp</span> | Soft synths &mdash; Gradual deceleration, calm
-                    </div>
-                </div>
-            </div>
-            <div class="planner-audio">
-                <span>Generated:</span>
-                <audio controls><source src="audio/planner_4.mp3" type="audio/mpeg"></audio>
-            </div>
-        </div>
-
-        <p class="notation">* Audio placeholders. Will be updated with real generated samples.</p>
     </div>
 </section>
 
@@ -528,35 +732,143 @@
     <div class="container">
         <h2>Citation</h2>
         <div class="cite-box">
-@article{anonymous2025multigranularity,
-  title   = {Multi-Granularity Conditioning with Music-Aware Position
-             Encoding for Long-Form Music Generation},
+@article{anonymous2025musegran,
+  title   = {MuseGran: Multi-Granularity Conditioning with Music-Aware
+             Position Encoding for Long-Form Music Generation},
   author  = {Anonymous},
   journal = {Under Review},
-  year    = {2025}
+  year    = {2026}
 }
         </div>
     </div>
 </section>
 
 <footer>
-    <p>Multi-Granularity Conditioning for Long-Form Music Generation &copy; 2025</p>
+    <p>MuseGran: Multi-Granularity Conditioning for Long-Form Music Generation &copy; 2026</p>
 </footer>
 
 <script>
-document.querySelectorAll('.spec-card-header').forEach(header => {
-    const body = header.nextElementSibling;
-    const arrow = header.querySelector('.spec-card-arrow');
-    header.addEventListener('click', () => {
-        body.classList.toggle('is-active');
-        arrow.classList.toggle('rotated');
-    });
+// Collapsible cards
+document.querySelectorAll('.spec-card-header, [onclick]').forEach(el => {
+    if (el.classList.contains('spec-card-header')) {
+        const body = el.nextElementSibling;
+        const arrow = el.querySelector('.spec-card-arrow');
+        el.addEventListener('click', () => {
+            body.classList.toggle('is-active');
+            arrow.classList.toggle('rotated');
+        });
+    }
 });
 
+// Single audio playback
 const audios = document.querySelectorAll('audio');
 audios.forEach(audio => {
     audio.addEventListener('play', () => {
         audios.forEach(other => { if (other !== audio) other.pause(); });
+    });
+});
+
+// Spectrogram panels always visible
+document.querySelectorAll('.spec-reveal').forEach(el => {
+    el.style.maxHeight = 'none';
+});
+
+// ===== Interactive Segment Player =====
+document.querySelectorAll('[data-seg-player]').forEach(card => {
+    const audio = card.querySelector('audio');
+    const viz = card.querySelector('.seg-player-viz');
+    if (!audio || !viz) return;
+
+    const playhead = viz.querySelector('.playhead');
+    const indicator = card.querySelector('.seg-indicator');
+    const labelEl = indicator.querySelector('.seg-now-label');
+    const timeEl = indicator.querySelector('.seg-now-time');
+    const dynEl = indicator.querySelector('.seg-now-dyn');
+    const fieldsEl = indicator.querySelector('.seg-fields');
+    const segments = JSON.parse(card.getAttribute('data-segments') || '[]');
+
+    // Update playhead and segment indicator
+    audio.addEventListener('timeupdate', () => {
+        const t = audio.currentTime;
+        const duration = audio.duration;
+        if (!duration) return;
+        const pct = (t / duration) * 100;
+        playhead.style.left = pct + '%';
+
+        let cur = null;
+        let curIdx = -1;
+        for (let i = 0; i < segments.length; i++) {
+            if (t >= segments[i].start && t < segments[i].end) { cur = segments[i]; curIdx = i; break; }
+        }
+        if (cur) {
+            labelEl.textContent = 'Seg ' + (curIdx + 1);
+            timeEl.textContent = cur.start.toFixed(1) + '–' + cur.end.toFixed(1) + 's';
+            dynEl.textContent = cur.dyn;
+            let html = '';
+            if (cur.style) html += '<span class="fk">style:</span><span class="fv">' + cur.style + '</span>';
+            if (cur.rhythm) html += '<span class="fk">rhythm:</span><span class="fv">' + cur.rhythm + '</span>';
+            if (cur.emotions) html += '<span class="fk">emotions:</span><span class="fv">' + cur.emotions + '</span>';
+            if (cur.instruments) html += '<span class="fk">instruments:</span><span class="fv">' + cur.instruments + '</span>';
+            fieldsEl.innerHTML = html;
+        } else {
+            labelEl.textContent = '--';
+            timeEl.textContent = '';
+            dynEl.textContent = '';
+            fieldsEl.innerHTML = '';
+        }
+    });
+
+    // Reset on ended
+    audio.addEventListener('ended', () => {
+        playhead.style.left = '0';
+        labelEl.textContent = '--';
+        timeEl.textContent = '';
+        dynEl.textContent = '';
+        fieldsEl.innerHTML = '';
+    });
+
+    // Click-to-seek on spectrogram/waveform
+    viz.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const rect = viz.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = x / rect.width;
+        audio.currentTime = pct * audio.duration;
+    });
+});
+
+// ===== Spectrogram Playhead for A/B Comparison & StructPlanner =====
+document.querySelectorAll('[data-spec-player]').forEach(container => {
+    // Audio may be inside the container (A/B) or in a preceding sibling (planner)
+    let audio = container.querySelector('audio');
+    if (!audio) {
+        const prev = container.previousElementSibling;
+        if (prev) audio = prev.querySelector('audio') || (prev.tagName === 'AUDIO' ? prev : null);
+    }
+    if (!audio) {
+        const parent = container.closest('[style*="border"]');
+        if (parent) audio = parent.querySelector('audio');
+    }
+    const wrap = container.classList.contains('spec-playhead-wrap') ? container : container.querySelector('.spec-playhead-wrap');
+    if (!audio || !wrap) return;
+    const playhead = wrap.querySelector('.playhead');
+
+    audio.addEventListener('timeupdate', () => {
+        if (!audio.duration) return;
+        const pct = (audio.currentTime / audio.duration) * 100;
+        playhead.style.left = pct + '%';
+    });
+
+    audio.addEventListener('ended', () => {
+        playhead.style.left = '0';
+    });
+
+    wrap.addEventListener('click', (e) => {
+        if (!audio.duration) return;
+        const rect = wrap.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const pct = x / rect.width;
+        audio.currentTime = pct * audio.duration;
     });
 });
 </script>
