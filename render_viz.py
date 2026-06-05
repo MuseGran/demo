@@ -44,16 +44,25 @@ SEGMENTS = {
         {"start":107.0,"end":124.3},{"start":124.3,"end":137.9}
     ],
     2: [
-        {"start":0,"end":3.5},{"start":3.5,"end":42.6},{"start":42.6,"end":60.0},
-        {"start":60.0,"end":84.0},{"start":84.0,"end":120.0}
+        {"start":0,"end":17.0},{"start":17.0,"end":36.4},{"start":36.4,"end":53.5},
+        {"start":53.5,"end":83.5},{"start":83.5,"end":102.8},{"start":102.8,"end":137.0},
+        {"start":137.0,"end":160.8}
     ],
     3: [
-        {"start":0,"end":1.9},{"start":1.9,"end":33.2},{"start":33.2,"end":56.9},
-        {"start":56.9,"end":88.0},{"start":88.0,"end":118.7},{"start":118.7,"end":120.0}
+        {"start":0,"end":26.8},{"start":26.8,"end":57.5},{"start":57.5,"end":82.4},
+        {"start":82.4,"end":95.9},{"start":95.9,"end":120.0}
+    ],
+    4: [
+        {"start":0,"end":26.8},{"start":26.8,"end":57.5},{"start":57.5,"end":82.4},
+        {"start":82.4,"end":95.9},{"start":95.9,"end":120.0}
+    ],
+    5: [
+        {"start":0,"end":10.4},{"start":10.4,"end":58.4},{"start":58.4,"end":60.0},
+        {"start":60.0,"end":120.0}
     ],
 }
 
-AUDIO_FILES = {1: "1.mp3", 2: "2.mp3", 3: "3.mp3"}
+AUDIO_FILES = {1: "1.mp3", 2: "2.mp3", 4: "4.mp3", 5: "5.mp3"}
 
 
 def alpha_blend(fg, alpha, bg):
