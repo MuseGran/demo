@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="description" content="MuseGran: Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MuseGran: Multi-Granularity Conditioning for Long-Form Music Generation</title>
+    <title>MuseGran: Multi-Granularity Conditioning with Music-Aware Position Encoding for Long-Form Music Generation</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -309,7 +309,7 @@
     <div class="container">
         <h2>Abstract</h2>
         <div class="abstract-box">
-            <p><strong>MuseGran</strong> is a DiT-based latent diffusion system for long-form music generation (up to ~180s, 44.1kHz stereo) with <strong>multi-granularity conditioning</strong> at global, segment, and frame scales. Key components include: (1) granularity-matched conditioning pathways for text, key, BPM, beat, and per-segment structure; (2) <strong>MusicRoPE</strong>, a hierarchical position encoding aware of bar/beat structure; and (3) <strong>SegAlign</strong>, a segment-level representation alignment strategy. A fine-tuned LLM (<strong>StructPlanner</strong>) converts free-form user prompts into structured generation specifications.</p>
+            <p><strong>MuseGran</strong> is a DiT-based latent diffusion system for long-form music generation (up to ~180s, 44.1kHz stereo) with <strong>multi-granularity conditioning</strong> at global, segment, and frame scales. Key components include: (1) granularity-matched conditioning pathways for text, key, BPM, beat, and per-segment structure; (2) <strong>MusicRoPE</strong>, a hierarchical position encoding that separately encodes bar, beat, and sequence positions and adds a periodic bar prior for phrase-level recurrence; and (3) <strong>SegAlign</strong>, a segment-level representation alignment strategy that regularizes musicality while preserving condition semantics. A fine-tuned LLM (<strong>StructPlanner</strong>) converts free-form user prompts into structured generation specifications.</p>
         </div>
         <figure class="figure" style="margin-top:24px;">
             <img src="figures/framework.png" alt="MuseGran Framework Overview" style="max-width:880px;">
